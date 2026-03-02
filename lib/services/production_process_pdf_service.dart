@@ -212,7 +212,23 @@ class ProductionProcessPdfService {
 
         final names = assignedUsers.map((u) => (u['name'] ?? u['id'] ?? '').toString()).where((x) => x.isNotEmpty).toList();
 
-        final state = (s['state'] ?? '').toString();
+                String state = (s['state'] ?? '').toString();
+
+        // Traducimos los estados al español para el PDF
+        switch (state) {
+          case 'pending':
+            state = 'Pendiente';
+            break;
+          case 'skipped':
+            state = 'No Requerida'; // O 'Omitido'
+            break;
+          case 'in_progress':
+            state = 'En Progreso';
+            break;
+          case 'completed':
+            state = 'Completada';
+            break;
+        }
 
         return [
           name,

@@ -58,9 +58,9 @@ debugPrint('AUTH uid=${u?.uid} email=${u?.email}');
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
-                const DrawerHeader(
-                  decoration: BoxDecoration(color: Color.fromARGB(255, 190, 134, 11)),
-                  child: Text('AMS MIMS', style: TextStyle(color: Colors.white, fontSize: 24)),
+                DrawerHeader(
+                  decoration: const BoxDecoration(color: Color.fromARGB(255, 190, 134, 11)),
+                  child: const Image(image: AssetImage('assets/logo.png'), fit: BoxFit.contain),
                 ),
                 ListTile(
                   leading: const Icon(Icons.dashboard),
@@ -164,7 +164,10 @@ debugPrint('AUTH uid=${u?.uid} email=${u?.email}');
               ],
             ),
           ),
-          appBar: AppBar(title: const Text('Dashboard')),
+         appBar: AppBar(
+            title: Image.asset('assets/logo.png', height: 40),
+            centerTitle: true, // Opcional: para que quede centrado
+          ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Column(
