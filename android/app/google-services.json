@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "679131789754",
+    "project_id": "ams-mims",
+    "storage_bucket": "ams-mims.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:679131789754:android:ae62f9fc9620f900af4583",
+        "android_client_info": {
+          "package_name": "com.example.ams_mims"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHBuXfHiQEdHkGz23lFD_mzNRsyQK7TAQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
