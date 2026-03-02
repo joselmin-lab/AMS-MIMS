@@ -228,13 +228,21 @@ class _AssignOperatorsToStagesScreenState extends State<AssignOperatorsToStagesS
 
       final stagesPayload = _buildStagesPayload(operators);
 
+            // Buscamos la primera etapa que no haya sido marcada como "No requerida" (skipped)
+      String nextStage = 'Finalizadas';
+      for (var stage in stagesPayload) {
+        if (stage['state'] != 'skipped') {
+          nextStage = stage['name'] as String;
+          break;
+        }
+      }
+
       await widget.parentOrderDoc.reference.update({
         'status': 'En Proceso',
-        'processStage': stagesPayload.firstWhere((s) => s['state'] != 'skipped', orElse: () => {'name': 'Finalizadas'})['name'],
+        'processStage': nextStage,
         'processStages': stagesPayload,
         'inProcessAt': FieldValue.serverTimestamp(),
       });
-
       if (context.mounted) Navigator.of(context).pop(true);
     } catch (e) {
       if (context.mounted) {
