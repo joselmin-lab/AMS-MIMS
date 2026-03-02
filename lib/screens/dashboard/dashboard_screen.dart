@@ -394,7 +394,10 @@ debugPrint('AUTH uid=${u?.uid} email=${u?.email}');
                       return const Center(child: CircularProgressIndicator());
                     }
 
-                    final docs = snap.data!.docs;
+                     final docs = snap.data!.docs.where((d) {
+                      final status = ((d.data() as Map<String, dynamic>)['status'] ?? '').toString();
+                      return status != 'Cancelada' && status != 'Finalizada';
+                    }).toList();
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

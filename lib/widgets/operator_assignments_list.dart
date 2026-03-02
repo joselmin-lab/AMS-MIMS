@@ -41,10 +41,10 @@ class _OperatorAssignmentsListState extends State<OperatorAssignmentsList> {
     final showMore = operatorsList.length > widget.initialOperatorLimit;
 
     if (operatorsList.isEmpty) {
-      return Card(
+      return const Card(
         elevation: 2,
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(16.0),
           child: Text(
             'No hay asignaciones a operarios en las órdenes mostradas.',
             style: TextStyle(color: Colors.black54),
@@ -76,12 +76,15 @@ class _OperatorAssignmentsListState extends State<OperatorAssignmentsList> {
       final data = (doc.data() as Map<String, dynamic>);
       final orderId = doc.id;
 
+      final status = (data['status'] ?? '').toString();
+      // Omitir órdenes canceladas o finalizadas en la lista de tareas del operario
+      if (status == 'Cancelada' || status == 'Finalizada') continue;
+
       final displayOrderNumber = (data['displayOrderNumber']?.toString().isNotEmpty ?? false)
           ? data['displayOrderNumber'].toString()
           : (data['orderNumber']?.toString() ?? orderId);
 
       final deliveryTs = data['deliveryDate'] as Timestamp?;
-      final status = (data['status'] ?? '').toString();
       final processStage = (data['processStage'] ?? '').toString();
       final customerName = (data['customerName'] ?? '').toString();
 
@@ -90,7 +93,7 @@ class _OperatorAssignmentsListState extends State<OperatorAssignmentsList> {
       // Normalizar etapas
       final processStages = processStagesRaw
           .whereType<Map>()
-          .map((e) => Map<String, dynamic>.from(e as Map))
+          .map((e) => Map<String, dynamic>.from(e))
           .toList();
 
       // Para esta orden: map uid -> set(stageName)
@@ -109,7 +112,7 @@ class _OperatorAssignmentsListState extends State<OperatorAssignmentsList> {
         final assigned = (st['assignedUsers'] as List<dynamic>? ?? []);
         for (final au in assigned) {
           if (au is! Map) continue;
-          final auMap = Map<String, dynamic>.from(au as Map);
+          final auMap = Map<String, dynamic>.from(au);
 
           final uid = (auMap['id'] ?? '').toString();
           final uname = (auMap['name'] ?? '').toString();
@@ -134,7 +137,7 @@ class _OperatorAssignmentsListState extends State<OperatorAssignmentsList> {
           final assigned = (st['assignedUsers'] as List<dynamic>? ?? []);
           for (final au in assigned) {
             if (au is! Map) continue;
-            final auMap = Map<String, dynamic>.from(au as Map);
+            final auMap = Map<String, dynamic>.from(au);
             final auId = (auMap['id'] ?? '').toString();
             if (auId != uid) continue;
             final auName = (auMap['name'] ?? '').toString();

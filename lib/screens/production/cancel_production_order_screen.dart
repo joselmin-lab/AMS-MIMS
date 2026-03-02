@@ -162,8 +162,8 @@ class _CancelProductionOrderScreenState extends State<CancelProductionOrderScree
 
                 const SizedBox(height: 12),
 
-                FilledButton.icon(
-                  onPressed: (_saving || _issued.isEmpty) ? null : _confirmCancel,
+                  FilledButton.icon(
+                  onPressed: _saving ? null : _confirmCancel, // <-- Quitar _issued.isEmpty
                   icon: _saving
                       ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
                       : const Icon(Icons.block),

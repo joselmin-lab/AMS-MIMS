@@ -111,12 +111,20 @@ class _OrdersByDateListState extends State<OrdersByDateList> {
               return const Center(child: CircularProgressIndicator());
             }
 
-            final baseDocs = snap.data!.docs;
+             final baseDocs = snap.data!.docs.where((d) {
+              final st = ((d.data() as Map<String, dynamic>)['status'] ?? '').toString();
+              return st != 'Cancelada' && st != 'Finalizada';
+            }).toList();
+            
             // Combinar base (stream) + extraDocs (paginadas)
             final combined = <QueryDocumentSnapshot>[...baseDocs];
-            // Añadir extraDocs evitando duplicados por id
+            
+            // Añadir extraDocs evitando duplicados por id y que no estén canceladas
             for (final d in _extraDocs) {
-              if (!combined.any((b) => b.id == d.id)) combined.add(d);
+              final st = ((d.data() as Map<String, dynamic>)['status'] ?? '').toString();
+              if (st != 'Cancelada' && st != 'Finalizada') {
+                if (!combined.any((b) => b.id == d.id)) combined.add(d);
+              }
             }
 
             if (combined.isEmpty) {
@@ -134,15 +142,19 @@ class _OrdersByDateListState extends State<OrdersByDateList> {
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: combined.length,
-                  itemBuilder: (context, index) {
+                   itemBuilder: (context, index) {
                     final doc = combined[index];
                     final data = doc.data() as Map<String, dynamic>;
+                    
+                    // AGREGAR ESTAS DOS LÍNEAS AQUÍ:
+                    final status = (data['status'] ?? '').toString();
+                    if (status == 'Cancelada' || status == 'Finalizada') return const SizedBox.shrink();
+
                     final id = doc.id;
                     final displayOrderNumber = (data['displayOrderNumber']?.toString().isNotEmpty ?? false)
                         ? data['displayOrderNumber'].toString()
                         : (data['orderNumber']?.toString() ?? id);
                     final deliveryTs = data['deliveryDate'] as Timestamp?;
-                    final status = (data['status'] ?? '').toString();
                     final processStage = (data['processStage'] ?? '').toString();
                     final customerName = (data['customerName'] ?? '').toString();
 

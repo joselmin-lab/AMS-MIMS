@@ -97,7 +97,7 @@ class _CancelProductionOrderWizardScreenState extends State<CancelProductionOrde
   }
 
   Future<void> _confirmCancel() async {
-    if (_issued.isEmpty) return;
+    // if (_issued.isEmpty) return;
 
     setState(() => _saving = true);
 
@@ -158,18 +158,35 @@ class _CancelProductionOrderWizardScreenState extends State<CancelProductionOrde
       appBar: AppBar(
         title: Text('Cancelar OP #$displayOrderNumber'),
       ),
-      body: _loading
+       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _issued.isEmpty
               ? ListView(
                   padding: const EdgeInsets.all(12),
-                  children: const [
-                    Card(
+                  children: [
+                    const Card(
                       child: Padding(
                         padding: EdgeInsets.all(12),
-                        child: Text('No hay materiales emitidos a producción para esta OP.'),
+                        child: Text('No hay materiales emitidos a producción para esta OP. Puedes cancelarla de todos modos.'),
                       ),
-                    )
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _noteCtrl,
+                      decoration: const InputDecoration(
+                        labelText: 'Nota (opcional)',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    FilledButton.icon(
+                      onPressed: _saving ? null : _confirmCancel,
+                      icon: _saving
+                          ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                          : const Icon(Icons.block),
+                      label: Text(_saving ? 'Cancelando...' : 'Confirmar Cancelación'),
+                      style: FilledButton.styleFrom(backgroundColor: Colors.red),
+                    ),
                   ],
                 )
               : ListView(
