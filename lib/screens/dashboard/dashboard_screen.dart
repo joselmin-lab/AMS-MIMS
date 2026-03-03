@@ -14,9 +14,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
   static const List<String> stageOrder = [
     'Mecanizado',
     'Soldadura',
@@ -25,31 +30,40 @@ class DashboardScreen extends StatelessWidget {
     'Control de Calidad',
   ];
 
+  late final Stream<QuerySnapshot> inventoryStream;
+  late final Stream<QuerySnapshot> productionStream;
+  late final Stream<QuerySnapshot> productionByDateStream;
+  late final Stream<QuerySnapshot> notificationsStream;
+  late final Future<bool> _isAdminFuture;
+
   @override
-  Widget build(BuildContext context) {
-      final u = FirebaseAuth.instance.currentUser;
-debugPrint('AUTH uid=${u?.uid} email=${u?.email}');
-   
-    final inventoryStream = FirebaseFirestore.instance.collection('inventory').snapshots();
-    final productionStream = FirebaseFirestore.instance.collection('production_orders').snapshots();
+  void initState() {
+    super.initState();
+    final u = FirebaseAuth.instance.currentUser;
+    debugPrint('AUTH uid=${u?.uid} email=${u?.email}');
+    _isAdminFuture = AppCurrentUserService().isAdmin();
 
-
+    inventoryStream = FirebaseFirestore.instance.collection('inventory').snapshots();
+    productionStream = FirebaseFirestore.instance.collection('production_orders').snapshots();
 
     // Stream para las secciones nuevas: agrupación por fecha (limit inicial 50)
-    final productionByDateStream = FirebaseFirestore.instance
+    productionByDateStream = FirebaseFirestore.instance
         .collection('production_orders')
         .orderBy('deliveryDate', descending: false)
         .limit(50)
         .snapshots();
 
-    final notificationsStream = FirebaseFirestore.instance
+    notificationsStream = FirebaseFirestore.instance
         .collection('notifications')
         .orderBy('createdAt', descending: true)
         .limit(20)
         .snapshots();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return FutureBuilder<bool>(
-      future: AppCurrentUserService().isAdmin(),
+      future: _isAdminFuture,
       builder: (context, adminSnap) {
         final isAdmin = adminSnap.data == true;
 
