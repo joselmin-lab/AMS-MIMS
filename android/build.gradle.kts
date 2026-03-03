@@ -10,19 +10,6 @@ allprojects {
     }
 }
 
-// Fuerza androidx.core en todos los subproyectos (incluyendo plugins)
-subprojects {
-    configurations.all {
-        resolutionStrategy.eachDependency {
-            if (requested.group == "androidx.core" &&
-                (requested.name == "core" || requested.name == "core-ktx")) {
-                useVersion("1.13.1")
-                because("lStar fix - requires API 31+ attribute")
-            }
-        }
-    }
-}
-
 val newBuildDir: Directory =
     rootProject.layout.buildDirectory
         .dir("../../build")
@@ -50,14 +37,6 @@ subprojects {
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
             jvmTarget = "17"
-        }
-    }
-}
-
-subprojects {
-    plugins.withId("com.android.library") {
-        extensions.findByType(com.android.build.gradle.LibraryExtension::class.java)?.apply {
-            compileSdk = 34
         }
     }
 }
