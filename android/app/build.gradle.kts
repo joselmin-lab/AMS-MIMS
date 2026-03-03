@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.ams_mims"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -22,7 +22,7 @@ android {
     defaultConfig {
         applicationId = "com.example.ams_mims"
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
@@ -36,4 +36,11 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+     implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.core:core:1.13.1")
+    implementation("androidx.window:window:1.3.0")
+    implementation("androidx.window:window-java:1.3.0")
 }

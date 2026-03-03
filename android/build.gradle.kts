@@ -9,7 +9,14 @@ allprojects {
         mavenCentral()
     }
 }
-
+allprojects {
+    configurations.all {
+        resolutionStrategy {
+            force("androidx.core:core-ktx:1.10.1")
+            force("androidx.core:core:1.10.1")
+        }
+    }
+}
 val newBuildDir: Directory =
     rootProject.layout.buildDirectory
         .dir("../../build")
@@ -42,6 +49,17 @@ subprojects {
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
             jvmTarget = "17"
+        }
+    }
+}
+
+
+// ESTO FUERZA A USAR LA VERSIÓN CORRECTA DE ANDROIDX QUE TIENE LSTAR
+allprojects {
+    configurations.all {
+        resolutionStrategy {
+            force("androidx.core:core-ktx:1.12.0")
+            force("androidx.core:core:1.12.0")
         }
     }
 }
