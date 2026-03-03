@@ -9,14 +9,20 @@ allprojects {
         mavenCentral()
     }
 }
-allprojects {
+
+// Fuerza androidx.core en todos los subproyectos (incluyendo plugins)
+subprojects {
     configurations.all {
-        resolutionStrategy {
-            force("androidx.core:core-ktx:1.10.1")
-            force("androidx.core:core:1.10.1")
+        resolutionStrategy.eachDependency {
+            if (requested.group == "androidx.core" &&
+                (requested.name == "core" || requested.name == "core-ktx")) {
+                useVersion("1.13.1")
+                because("lStar fix - requires API 31+ attribute")
+            }
         }
     }
 }
+
 val newBuildDir: Directory =
     rootProject.layout.buildDirectory
         .dir("../../build")
@@ -33,33 +39,17 @@ subprojects {
     project.evaluationDependsOn(":app")
 }
 
-/**
- * Force Java/Kotlin 17 across ALL subprojects (including plugins),
- * using TASK configuration only (safe with AGP property finalization).
- */
 subprojects {
     tasks.withType<JavaCompile>().configureEach {
         sourceCompatibility = "17"
         targetCompatibility = "17"
         options.encoding = "UTF-8"
-        // Quita warnings por flags antiguas si algún plugin las usa
         options.compilerArgs.add("-Xlint:-options")
     }
 
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
             jvmTarget = "17"
-        }
-    }
-}
-
-
-// ESTO FUERZA A USAR LA VERSIÓN CORRECTA DE ANDROIDX QUE TIENE LSTAR
-allprojects {
-    configurations.all {
-        resolutionStrategy {
-            force("androidx.core:core-ktx:1.12.0")
-            force("androidx.core:core:1.12.0")
         }
     }
 }
