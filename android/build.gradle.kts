@@ -9,14 +9,19 @@ allprojects {
         mavenCentral()
     }
 }
-allprojects {
+
+// Fuerza androidx.core en todos los subproyectos (incluyendo plugins)
+subprojects {
     configurations.all {
-        resolutionStrategy {
-            force("androidx.core:core-ktx:1.10.1")
-            force("androidx.core:core:1.10.1")
+        resolutionStrategy.eachDependency {
+            if (requested.group == "androidx.core") {
+                useVersion("1.13.1")
+                because("lStar fix - requires API 31+ attribute")
+            }
         }
     }
 }
+
 val newBuildDir: Directory =
     rootProject.layout.buildDirectory
         .dir("../../build")
@@ -49,17 +54,6 @@ subprojects {
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
             jvmTarget = "17"
-        }
-    }
-}
-
-
-// ESTO FUERZA A USAR LA VERSIÓN CORRECTA DE ANDROIDX QUE TIENE LSTAR
-allprojects {
-    configurations.all {
-        resolutionStrategy {
-            force("androidx.core:core-ktx:1.12.0")
-            force("androidx.core:core:1.12.0")
         }
     }
 }
