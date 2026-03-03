@@ -158,100 +158,115 @@ class _CancelProductionOrderWizardScreenState extends State<CancelProductionOrde
       appBar: AppBar(
         title: Text('Cancelar OP #$displayOrderNumber'),
       ),
-       body: _loading
+      body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : _issued.isEmpty
-              ? ListView(
-                  padding: const EdgeInsets.all(12),
-                  children: [
-                    const Card(
-                      child: Padding(
-                        padding: EdgeInsets.all(12),
-                        child: Text('No hay materiales emitidos a producción para esta OP. Puedes cancelarla de todos modos.'),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(
-                      controller: _noteCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'Nota (opcional)',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    FilledButton.icon(
-                      onPressed: _saving ? null : _confirmCancel,
-                      icon: _saving
-                          ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                          : const Icon(Icons.block),
-                      label: Text(_saving ? 'Cancelando...' : 'Confirmar Cancelación'),
-                      style: FilledButton.styleFrom(backgroundColor: Colors.red),
-                    ),
-                  ],
-                )
-              : ListView(
-                  padding: const EdgeInsets.all(12),
-                  children: [
-                    Text('Estado actual: $currentStatus', style: const TextStyle(color: Colors.black54)),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Parte ${_index + 1} de ${_issued.length}. Selecciona si retorna a inventario o se va a SCRAP.',
-                      style: const TextStyle(color: Colors.black54),
-                    ),
-                    const SizedBox(height: 12),
+          : Column(
+              children: [
+                Expanded(
+                  child: _issued.isEmpty
+                      ? ListView(
+                          padding: const EdgeInsets.all(12),
+                          children: [
+                            const Card(
+                              child: Padding(
+                                padding: EdgeInsets.all(12),
+                                child: Text('No hay materiales emitidos a producción para esta OP. Puedes cancelarla de todos modos.'),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            TextField(
+                              controller: _noteCtrl,
+                              decoration: const InputDecoration(
+                                labelText: 'Nota (opcional)',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          ],
+                        )
+                      : ListView(
+                          padding: const EdgeInsets.all(12),
+                          children: [
+                            Text('Estado actual: $currentStatus', style: const TextStyle(color: Colors.black54)),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Parte ${_index + 1} de ${_issued.length}. Selecciona si retorna a inventario o se va a SCRAP.',
+                              style: const TextStyle(color: Colors.black54),
+                            ),
+                            const SizedBox(height: 12),
 
-                    _buildStepCard(_issued[_index]),
+                            _buildStepCard(_issued[_index]),
 
-                    const SizedBox(height: 12),
+                            const SizedBox(height: 12),
 
-                    Row(
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: OutlinedButton.icon(
+                                    onPressed: _isFirst ? null : _prev,
+                                    icon: const Icon(Icons.arrow_back),
+                                    label: const Text('Anterior'),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: FilledButton.icon(
+                                    onPressed: _isLast ? null : _next,
+                                    icon: const Icon(Icons.arrow_forward),
+                                    label: const Text('Siguiente'),
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            const SizedBox(height: 16),
+
+                            TextField(
+                              controller: _noteCtrl,
+                              decoration: const InputDecoration(
+                                labelText: 'Nota (opcional)',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+
+                            const SizedBox(height: 8),
+                            const Text(
+                              'Nota: Esto NO elimina la OP; la marca como "Cancelada".',
+                              style: TextStyle(color: Colors.black54, fontSize: 12),
+                            ),
+                          ],
+                        ),
+                ),
+                SafeArea(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border(top: BorderSide(color: Colors.grey.shade300)),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    child: Row(
                       children: [
                         Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: _isFirst ? null : _prev,
-                            icon: const Icon(Icons.arrow_back),
-                            label: const Text('Anterior'),
+                          child: OutlinedButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text('Cerrar'),
                           ),
                         ),
                         const SizedBox(width: 10),
                         Expanded(
                           child: FilledButton.icon(
-                            onPressed: _isLast ? null : _next,
-                            icon: const Icon(Icons.arrow_forward),
-                            label: const Text('Siguiente'),
+                            onPressed: _saving ? null : _confirmCancel,
+                            icon: _saving
+                                ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                                : const Icon(Icons.block),
+                            label: Text(_saving ? 'Cancelando...' : 'Confirmar Cancelación'),
+                            style: FilledButton.styleFrom(backgroundColor: Colors.red),
                           ),
                         ),
                       ],
                     ),
-
-                    const SizedBox(height: 16),
-
-                    TextField(
-                      controller: _noteCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'Nota (opcional)',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    FilledButton.icon(
-                      onPressed: _saving ? null : _confirmCancel,
-                      icon: _saving
-                          ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                          : const Icon(Icons.block),
-                      label: Text(_saving ? 'Cancelando...' : 'Confirmar Cancelación'),
-                      style: FilledButton.styleFrom(backgroundColor: Colors.red),
-                    ),
-
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Nota: Esto NO elimina la OP; la marca como "Cancelada".',
-                      style: TextStyle(color: Colors.black54, fontSize: 12),
-                    ),
-                  ],
+                  ),
                 ),
+              ],
+            ),
     );
   }
 
