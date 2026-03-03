@@ -7,16 +7,16 @@ import 'package:flutter/material.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Capture Flutter framework errors
-  FlutterError.onError = (FlutterErrorDetails details) {
-    FlutterError.dumpErrorToConsole(details);
-    // TODO: send to crash reporter if configured
-  };
-
   await runZonedGuarded<Future<void>>(
     () async {
+      WidgetsFlutterBinding.ensureInitialized();
+
+      // Capture Flutter framework errors
+      FlutterError.onError = (FlutterErrorDetails details) {
+        FlutterError.dumpErrorToConsole(details);
+        // TODO: send to crash reporter if configured
+      };
+
       try {
         await Firebase.initializeApp(
           options: DefaultFirebaseOptions.currentPlatform,
