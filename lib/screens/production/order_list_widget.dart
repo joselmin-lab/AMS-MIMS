@@ -384,18 +384,32 @@ class OrderListWidget extends StatelessWidget {
                               }
 
                               if (value == 'cancel') {
-                                if (currentStatus == 'En Proceso') {
-                                  await Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (_) => CancelProductionOrderWizardScreen(orderDoc: document),
-                                    ),
-                                  );
-                                } else if (currentStatus == 'En Cola') {
-                                  await Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (_) => cancel_ui.CancelProductionOrderScreen(orderDoc: document),
-                                    ),
-                                  );
+                                final statusNorm = currentStatus.trim().toLowerCase();
+                                try {
+                                  if (statusNorm == 'en proceso') {
+                                    final res = await Navigator.of(context).push<bool>(
+                                      MaterialPageRoute(
+                                        builder: (_) => CancelProductionOrderWizardScreen(orderDoc: document),
+                                      ),
+                                    );
+                                    if (res == true && context.mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('OP cancelada.')));
+                                    }
+                                  } else if (statusNorm == 'en cola') {
+                                    final res = await Navigator.of(context).push<bool>(
+                                      MaterialPageRoute(
+                                        builder: (_) => cancel_ui.CancelProductionOrderScreen(orderDoc: document),
+                                      ),
+                                    );
+                                    if (res == true && context.mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('OP cancelada.')));
+                                    }
+                                  }
+                                } catch (e, st) {
+                                  debugPrint('Error navegando a Cancel: $e\n$st');
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al abrir cancelación: $e')));
+                                  }
                                 }
                                 return;
                               }
@@ -502,7 +516,7 @@ class OrderListWidget extends StatelessWidget {
                               final items = <PopupMenuEntry<String>>[];
 
                               // Solo padre
-                              if (!isChildOrder && currentStatus == 'En Cola') {
+                              if (!isChildOrder && currentStatus.trim().toLowerCase() == 'en cola') {
                                 items.addAll(const [
                                   PopupMenuItem<String>(
                                     value: 'edit',
@@ -535,7 +549,7 @@ class OrderListWidget extends StatelessWidget {
                                 ]);
                               }
 
-                              if (!isChildOrder && currentStatus == 'En Proceso') {
+                              if (!isChildOrder && currentStatus.trim().toLowerCase() == 'en proceso') {
                                 items.addAll([
                                   const PopupMenuItem<String>(
                                     value: 'process_pdf_generate',
